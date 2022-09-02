@@ -106,7 +106,9 @@ class _HomepageState extends State<Homepage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            city ?? 'Loading City Name',
+                            error
+                                ? "Please Enter Correct Location"
+                                : city ?? 'Loading City Name',
                             style: cityHeading,
                           ),
                           Container(
@@ -120,9 +122,7 @@ class _HomepageState extends State<Homepage> {
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: const Color(0xffE7E6E6),
-                                hintText: error
-                                    ? "Please Enter Correct Location"
-                                    : "Search Cities",
+                                hintText: "Search Cities",
                                 alignLabelWithHint: true,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 prefixIcon: const Icon(
@@ -136,6 +136,7 @@ class _HomepageState extends State<Homepage> {
                               onEditingComplete: () async {
                                 if (await obj
                                     .updateWeather(FindLocation.text)) {
+                                  error = false;
                                   setState(() {});
                                 } else {
                                   error = true;

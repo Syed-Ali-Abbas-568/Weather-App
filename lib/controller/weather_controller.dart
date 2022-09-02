@@ -16,8 +16,13 @@ class WeatherController {
   CompleteWeather? weatherData;
 
   Future<bool> updateWeather(String address) async {
-    List<geocode.Location> locations =
-        await geocode.locationFromAddress(address);
+    List<geocode.Location> locations;
+    try {
+      locations = await geocode.locationFromAddress(address);
+    } catch (e) {
+      return false;
+    }
+
     if (locations.isEmpty == false) {
       _isLoading = true;
 
