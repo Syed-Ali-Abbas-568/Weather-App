@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:weather_app/api/api_key.dart';
-
 import 'package:http/http.dart' as http;
+
+import 'package:weather_app/api/api_key.dart';
 import 'package:weather_app/models/complete/complete_weather_data.dart';
 import 'package:weather_app/models/weather_data/weather_current.dart';
 import 'package:weather_app/models/weather_data/weather_daily.dart';

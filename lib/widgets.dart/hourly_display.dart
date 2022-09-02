@@ -9,22 +9,7 @@ class HourlyDataWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(),
-          alignment: Alignment.topCenter,
-          child: const Text(
-            "Now",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-        hourlyList(),
-      ],
-    );
+    return hourlyList();
   }
 
   Widget hourlyList() {
@@ -45,6 +30,7 @@ class HourlyDataWidget extends StatelessWidget {
               temp: obj.weatherData?.hourly.hourly[index].temp,
               timeStamp: obj.weatherData?.hourly.hourly[index].dt,
               windSpeed: obj.weatherData?.hourly.hourly[index].windSpeed,
+              index: index,
               weatherIcon:
                   "${obj.weatherData?.hourly.hourly[index].weather![0].icon!}",
             ),
@@ -56,22 +42,28 @@ class HourlyDataWidget extends StatelessWidget {
 }
 
 class HourlyDetails extends StatelessWidget {
-  HourlyDetails(
+  const HourlyDetails(
       {Key? key,
       required this.timeStamp,
       required this.temp,
       required this.weatherIcon,
+      required this.index,
       required this.windSpeed})
       : super(key: key);
-  dynamic temp;
-  dynamic timeStamp;
-  String weatherIcon;
-  dynamic windSpeed;
+  final dynamic temp;
+  final dynamic timeStamp;
+  final String weatherIcon;
+  final dynamic windSpeed;
+  final int index;
 
-  String getTime(final timeStamp) {
-    DateTime time = DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000);
-    String newTime = DateFormat('jm').format(time);
-    return newTime;
+  String getTime(final timeStamp, int index) {
+    if (index == 0) {
+      return "Now";
+    } else {
+      DateTime time = DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000);
+      String newTime = DateFormat('jm').format(time);
+      return newTime;
+    }
   }
 
   @override
@@ -79,13 +71,11 @@ class HourlyDetails extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          child: Text(
-            getTime(timeStamp),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
+        Text(
+          getTime(timeStamp, index),
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
           ),
         ),
         Text(
@@ -95,12 +85,10 @@ class HourlyDetails extends StatelessWidget {
             fontWeight: FontWeight.w400,
           ),
         ),
-        Container(
-          child: Image.asset(
-            "assets/icons/$weatherIcon.png",
-            width: 30,
-            height: 20,
-          ),
+        Image.asset(
+          "assets/icons/$weatherIcon.png",
+          width: 30,
+          height: 20,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 
 import 'package:weather_app/constants.dart';
-import 'package:weather_app/controller/weather_controller.dart';
+
 import 'package:weather_app/screens/seven_day_forcast.dart';
 import 'package:weather_app/widgets.dart/daily_forcast.dart';
 import 'package:weather_app/widgets.dart/hourly_display.dart';
@@ -18,13 +18,14 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   final aqi = TextEditingController();
+  final FindLocation = TextEditingController();
   String? city;
   String? mainWeather;
+  bool error = false;
 
   @override
   void initState() {
     obj.checkData();
-    getCityName();
     super.initState();
   }
 
@@ -33,7 +34,7 @@ class _HomepageState extends State<Homepage> {
         await placemarkFromCoordinates(obj.latitude!, obj.longitude!);
     Placemark place = placemark[0];
     setState(() {
-      city = place.locality;
+      city = " ${place.locality}, ${place.administrativeArea}";
     });
   }
 
@@ -48,9 +49,8 @@ class _HomepageState extends State<Homepage> {
         builder: (context, snapshot) {
           log("value of snapshot is ${snapshot.data}");
           if (snapshot.data == false) {
+            getCityName();
             mainWeather = obj.weatherData?.current.current.weather![0].main;
-            log(mainWeather!);
-            log(selectImage());
 
             return SingleChildScrollView(
               child: SizedBox(
@@ -81,13 +81,22 @@ class _HomepageState extends State<Homepage> {
                       right: 20,
                       child: HourlyDataWidget(),
                     ),
-                    // const Positioned(
-                    //   top: 500,
-                    //   left: 20,
-                    //   right: 20,
-                    //   child: DailyForcast(),
-                    // )
-
+                    Positioned(
+                      top: 590,
+                      left: 20,
+                      right: 20,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(125, 255, 255, 255),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        height: 200,
+                        width: 200,
+                        child: const DailyForcast(
+                          vertical: true,
+                        ),
+                      ),
+                    ),
                     Positioned(
                       left: 22,
                       right: 21,
@@ -104,13 +113,16 @@ class _HomepageState extends State<Homepage> {
                             padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
                             height: 34,
                             child: TextField(
+                              controller: FindLocation,
                               style: searchLabel,
                               textAlign: TextAlign.center,
                               textAlignVertical: TextAlignVertical.bottom,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: const Color(0xffE7E6E6),
-                                hintText: "Search Cities",
+                                hintText: error
+                                    ? "Please Enter Correct Location"
+                                    : "Search Cities",
                                 alignLabelWithHint: true,
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 prefixIcon: const Icon(
@@ -121,17 +133,37 @@ class _HomepageState extends State<Homepage> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                               ),
-                              onTap: null,
+                              onEditingComplete: () async {
+                                if (await obj
+                                    .updateWeather(FindLocation.text)) {
+                                  setState(() {});
+                                } else {
+                                  error = true;
+                                  setState(() {});
+                                }
+                              },
                             ),
                           ),
                         ],
                       ),
                     ),
                     Positioned(
+                      top: 83,
+                      left: 5,
+                      right: 380,
+                      child: IconButton(
+                        onPressed: () async {
+                          obj.reset();
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.arrow_back),
+                      ),
+                    ),
+                    Positioned(
                       top: 159,
                       left: 116,
                       right: 80,
-                      child: Container(
+                      child: SizedBox(
                         height: 225,
                         width: 135,
                         child: Row(
@@ -444,7 +476,7 @@ class _HomepageState extends State<Homepage> {
     } else if (mainWeather == "Mist") {
       return "assets/images/mist.jpg";
     } else if (mainWeather == "Clear") {
-      return "assets/images/clear.jpg";
+      return "assets/images/clear.png";
     } else {
       return "assets/images/cloudy.png";
     }
