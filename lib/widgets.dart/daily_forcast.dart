@@ -130,6 +130,7 @@ class DailyList extends StatelessWidget {
       );
     } else {
       return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Image.asset(
             "assets/icons/$weatherIcon.png",
@@ -150,17 +151,7 @@ class DailyList extends StatelessWidget {
             width: 10,
           ),
           Text(
-            "MIN:${tempMin.toStringAsFixed(1)}°C",
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            "MAX: ${tempMax.toStringAsFixed(1)}°C",
+            "${tempMin.toStringAsFixed(1)}°C / ${tempMax.toStringAsFixed(1)}°C",
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,

@@ -22,6 +22,7 @@ class _HomepageState extends State<Homepage> {
   String? city;
   String? mainWeather;
   bool error = false;
+  bool back_button = false;
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _HomepageState extends State<Homepage> {
 
             return SingleChildScrollView(
               child: SizedBox(
-                height: 1256,
+                height: 1300,
                 width: MediaQuery.of(context).size.width,
                 child: Stack(
                   fit: StackFit.expand,
@@ -111,62 +112,78 @@ class _HomepageState extends State<Homepage> {
                                 : city ?? 'Loading City Name',
                             style: cityHeading,
                           ),
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
-                            height: 34,
-                            child: TextField(
-                              controller: FindLocation,
-                              style: searchLabel,
-                              textAlign: TextAlign.center,
-                              textAlignVertical: TextAlignVertical.bottom,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: const Color(0xffE7E6E6),
-                                hintText: "Search Cities",
-                                alignLabelWithHint: true,
-                                hintStyle: const TextStyle(color: Colors.grey),
-                                prefixIcon: const Icon(
-                                  Icons.search_sharp,
-                                  color: Colors.grey,
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              children: [
+                                Visibility(
+                                  visible: back_button,
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      obj.reset();
+                                      back_button = false;
+                                      setState(() {});
+                                    },
+                                    icon: Icon(Icons.arrow_back),
+                                  ),
                                 ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                Expanded(
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(22, 0, 22, 0),
+                                    height: 34,
+                                    child: TextField(
+                                      controller: FindLocation,
+                                      style: searchLabel,
+                                      textAlign: TextAlign.center,
+                                      textAlignVertical:
+                                          TextAlignVertical.bottom,
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: const Color(0xffE7E6E6),
+                                        hintText: "Search Cities",
+                                        alignLabelWithHint: true,
+                                        hintStyle:
+                                            const TextStyle(color: Colors.grey),
+                                        prefixIcon: const Icon(
+                                          Icons.search_sharp,
+                                          color: Colors.grey,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(16),
+                                        ),
+                                      ),
+                                      onEditingComplete: () async {
+                                        if (await obj
+                                            .updateWeather(FindLocation.text)) {
+                                          FindLocation.clear();
+                                          error = false;
+                                          back_button = true;
+                                          setState(() {});
+                                        } else {
+                                          FindLocation.clear();
+                                          error = true;
+                                          back_button = false;
+                                          setState(() {});
+                                        }
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              onEditingComplete: () async {
-                                if (await obj
-                                    .updateWeather(FindLocation.text)) {
-                                  error = false;
-                                  setState(() {});
-                                } else {
-                                  error = true;
-                                  setState(() {});
-                                }
-                              },
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
                     Positioned(
-                      top: 83,
-                      left: 5,
-                      right: 380,
-                      child: IconButton(
-                        onPressed: () async {
-                          obj.reset();
-                          setState(() {});
-                        },
-                        icon: Icon(Icons.arrow_back),
-                      ),
-                    ),
-                    Positioned(
                       top: 159,
-                      left: 116,
-                      right: 80,
+                      left: 109,
+                      right: 60,
                       child: SizedBox(
                         height: 225,
-                        width: 135,
+                        width: MediaQuery.of(context).size.width,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -473,7 +490,7 @@ class _HomepageState extends State<Homepage> {
     } else if (mainWeather == "Drizzle" || mainWeather == "Rain") {
       return "assets/images/rainy.png";
     } else if (mainWeather == "Snow") {
-      return "assets/images/snow.jpeg";
+      return "assets/images/snow.jpg";
     } else if (mainWeather == "Mist") {
       return "assets/images/mist.jpg";
     } else if (mainWeather == "Clear") {
