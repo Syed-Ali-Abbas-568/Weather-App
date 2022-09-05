@@ -27,5 +27,3 @@ The Apps should change its background with each type of weather.
 App should allow the user to see the weather of a valid searched location
 
 ## Video defining the use cases one by one
-
-[![Watch this video](https://i9.ytimg.com/vi/T_PK8BD5sKo/mqdefault.jpg?v=62fe6582&sqp=CITL-ZcG&rs=AOn4CLD-pgWhId7uk3TsqfWvP6mt7LQYqw)](https://youtu.be/T_PK8BD5sKo)
