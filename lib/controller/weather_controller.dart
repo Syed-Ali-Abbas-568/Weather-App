@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:geocoding/geocoding.dart' as geocode;
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,18 +109,31 @@ class WeatherController {
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
+        weatherData = await FetchWeatherAPI()
+            .processData(latitude, longitude)
+            .then((value) {
+          return value;
+        });
         return;
       }
     }
 
     //basically checks if the location permission was provicded or not, if not then requests for it
     permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
+    if (permissionGranted == PermissionStatus.denied ||
+        permissionGranted == PermissionStatus.deniedForever) {
       permissionGranted = await location.requestPermission();
+
       if (permissionGranted != PermissionStatus.granted) {
+        weatherData = await FetchWeatherAPI()
+            .processData(latitude, longitude)
+            .then((value) {
+          return value;
+        });
         return;
       }
     }
+    log("do we come here ever?");
 
     //getting the current position of the user
 
