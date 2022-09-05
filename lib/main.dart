@@ -1,5 +1,3 @@
-import 'package:device_preview/device_preview.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -7,10 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_app/screens/home.dart';
 
 void main() {
-  runApp(DevicePreview(
-    builder: (context) => MyApp(),
-    enabled: !kReleaseMode,
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
